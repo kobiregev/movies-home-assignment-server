@@ -1,7 +1,12 @@
+require("dotenv").config();
 import express from "express";
+import config from "config";
+import router from "./routes";
 
-const port = 3000;
+const port = config.get("port");
 const app = express();
+
+app.use(router);
 
 app.get("/", (req, res) => {
   return res.send("Hello World");
