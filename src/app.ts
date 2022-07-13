@@ -8,7 +8,7 @@ const app = express();
 
 app.use(router);
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   return res.send("Hello World");
 });
 

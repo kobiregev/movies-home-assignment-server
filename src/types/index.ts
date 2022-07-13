@@ -7,7 +7,7 @@ export interface BaseResponse {
   Error?: string;
 }
 
-export type GetMoviesResponseData = BaseResponse & {
+export type GetDefaultMoviesListResponse = BaseResponse & {
   Search?: ISearchMovie[];
   totalResults?: string;
 };

@@ -1,5 +1,3 @@
-
-
 export function getPagination(page: number, totalResults: number, limit = 10) {
   return {
     totalResults: totalResults,

@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
-import { GetMoviesParams, GetMoviesResponseData } from "../types";
+import { GetMoviesParams } from "../types";
 import config from "config";
-import fetch from "node-fetch";
-import { getMovieByImdbId } from "../service/service";
+import { getDefaultMoviesList, getMovieByImdbId } from "../service/service";
 
-const apiUrl = config.get<string>("apiUrl");
 // omdbApi requires search query
 const defaultSearchMovie = "Marvel";
 
@@ -15,17 +13,18 @@ export async function getMoviesHandler(
   try {
     // p = page
     const { page } = req.params;
-    const response = await fetch(
-      `${apiUrl}&page=${page}&s=${defaultSearchMovie}`
+
+    const { Search, Error, totalResults } = await getDefaultMoviesList(
+      page,
+      defaultSearchMovie
     );
-    const data: GetMoviesResponseData = await response.json();
-    console.log(data.totalResults)
-    if (data.Error) return res.status(400).send(data.Error);
+
+    if (Error || !Search) return res.status(400).send(Error);
 
     const parsedMovies = await Promise.all(
-      data.Search!.map((movie) => getMovieByImdbId(movie.imdbID))
+      Search.map((movie) => getMovieByImdbId(movie.imdbID))
     );
-    
+
     if (parsedMovies) {
       return res.status(200).send(parsedMovies);
     }
