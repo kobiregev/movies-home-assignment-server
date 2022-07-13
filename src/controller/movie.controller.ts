@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
-import { GetMoviesParams } from "../types";
-import config from "config";
-import { getDefaultMoviesList, getMovieByImdbId } from "../service/service";
+import { GetMoviesParams, SearchMovieParams } from "../types";
+import {
+  getDefaultMoviesList,
+  getMovieByImdbId,
+  getMovieByTitle,
+} from "../service/service";
+import { getPagination } from "../utils/utils";
 
 // omdbApi requires search query
 const defaultSearchMovie = "Marvel";
@@ -21,14 +25,33 @@ export async function getMoviesHandler(
 
     if (Error || !Search) return res.status(400).send(Error);
 
-    const parsedMovies = await Promise.all(
+    const detaliedMovies = await Promise.all(
       Search.map((movie) => getMovieByImdbId(movie.imdbID))
     );
 
-    if (parsedMovies) {
-      return res.status(200).send(parsedMovies);
+    if (detaliedMovies) {
+      // Search.length is equal to number of results we get from Omdb api
+      const pagination = getPagination(+page, +totalResults!, Search.length);
+      return res.status(200).send({ movies: detaliedMovies, ...pagination });
     }
     return res.sendStatus(400);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error);
+  }
+}
+
+export async function searchMovieHandler(
+  req: Request<SearchMovieParams, {}, {}>,
+  res: Response
+) {
+  try {
+    const { title } = req.params;
+
+    const { Error, ...movie } = await getMovieByTitle(title);
+    if (Error) return res.status(400).send(Error);
+
+    return res.status(200).send(movie);
   } catch (error) {
     console.error(error);
     return res.status(500).send(error);

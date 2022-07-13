@@ -1,5 +1,13 @@
+export enum Type {
+  Movie = "movie",
+}
+
 export type GetMoviesParams = {
   page: string;
+};
+
+export type SearchMovieParams = {
+  title: string;
 };
 
 export interface BaseResponse {
@@ -18,10 +26,6 @@ export interface ISearchMovie {
   imdbID: string;
   Type: Type;
   Poster: string;
-}
-
-export enum Type {
-  Movie = "movie",
 }
 
 export interface IMovie extends BaseResponse {
