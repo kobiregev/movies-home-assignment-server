@@ -2,10 +2,12 @@ require("dotenv").config();
 import express from "express";
 import config from "config";
 import router from "./routes";
+import cors from "cors";
 
 const port = config.get("port");
 const app = express();
 
+app.use(cors());
 app.use(router);
 
 app.get("/", (_, res) => {
