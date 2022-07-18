@@ -4,7 +4,7 @@ import config from "config";
 import router from "./routes";
 import cors from "cors";
 
-const port = config.get("port");
+const port = config.get("port") || 3000;
 const app = express();
 
 app.use(cors());
