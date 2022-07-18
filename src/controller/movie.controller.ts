@@ -7,7 +7,7 @@ import {
 } from "../service/service";
 import { getPagination } from "../utils/utils";
 // omdbApi requires search query
-const defaultSearchMovie = "Batman";
+const defaultSearchMovie = "Spider man";
 
 export async function getMoviesHandler(
   req: Request<GetMoviesParams, {}, {}>,
@@ -24,14 +24,14 @@ export async function getMoviesHandler(
 
     if (Error || !Search) return res.status(400).send(Error);
 
-    const detaliedMovies = await Promise.all(
+    const detailedMovies = await Promise.all(
       Search.map((movie) => getMovieByImdbId(movie.imdbID))
     );
 
-    if (detaliedMovies) {
+    if (detailedMovies) {
       // Search.length is equal to number of results we get from Omdb api
       const pagination = getPagination(+page, +totalResults!);
-      return res.status(200).send({ movies: detaliedMovies, ...pagination });
+      return res.status(200).send({ movies: detailedMovies, ...pagination });
     }
     return res.sendStatus(400);
   } catch (error) {
